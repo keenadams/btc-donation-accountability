@@ -1,1 +1,1 @@
-# btc-donation-accountability
+# btc-donation-transparency
