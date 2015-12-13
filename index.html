@@ -1,47 +1,139 @@
-<!DOCTYPE html>
-<html lang="en-us">
-  <head>
-    <meta charset="UTF-8">
-    <title>Bitcoin Donation Transparency by keenadams</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
-    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
-    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
-  </head>
-  <body>
-    <section class="page-header">
-      <h1 class="project-name">Bitcoin Donation Transparency</h1>
-      <h2 class="project-tagline">Assessing the feasibility of donation transparency in Bitcoin</h2>
-      <a href="https://github.com/keenadams/btc-donation-transparency" class="btn">View on GitHub</a>
-      <a href="https://github.com/keenadams/btc-donation-transparency/zipball/master" class="btn">Download .zip</a>
-      <a href="https://github.com/keenadams/btc-donation-transparency/tarball/master" class="btn">Download .tar.gz</a>
-    </section>
+<!doctype html>
+<html lang=en>
+  <meta charset=utf-8>
+  <title>Transaction Tracker</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+  <link href='http://fonts.googleapis.com/css?family=Cantata+One|Open+Sans:300,600' rel='stylesheet' type='text/css'>
 
-    <section class="main-content">
-      <h3>
-<a id="overview" class="anchor" href="#overview" aria-hidden="true"><span class="octicon octicon-link"></span></a>Overview</h3>
+  <nav class="navbar navbar-default">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="#">Bitcoin Donation Transparency</a>
+        </div>
+      </div>
+      <div class="row">
+        <ul class="nav nav-pills nav-justified" role="tablist">
+          <li role="presentation" class="active"><a href="#donor" aria-controls="donor" role="tab" data-toggle="tab">Donor</a></li>
+            <li role="presentation"><a href="#non-profit" aria-controls="non-profit" role="tab" data-toggle="tab">Non-profit</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+<!-- 
+  <div class="container-fluid">
+    <div class="alert alert-success alert-dismissible" role="alert" id="metaAlert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <strong>Sweet!</strong> Your metadata has been added to the transaction.
+    </div>
+  </div> -->
 
-<p>With this project, my aim is to research and consider ways in which Bitcoin could be used to improve transparency in donations. The blockchain provides an unprecedented way to track public transactions and therefore could be used to match donations with more tangible expenses. </p>
+  <div class="tab-content">
+    <div role="tab-panel" class="tab-pane fade in active" id="donor">
+      <div class="container-fluid donor-content">
+        <form>
+          <div class="form-group">
+            <label for="transactionHash">Transaction Hash</label>
+            <input type="hash" class="form-control" id="transactionHash" placeholder="Hash">
+          </div>
+          <button id="buttonTransactions" type="button" class="btn btn-default">Submit</button>
+        <form>
 
-<h3>
-<a id="team" class="anchor" href="#team" aria-hidden="true"><span class="octicon octicon-link"></span></a>Team</h3>
+        <hr>
 
-<p>Kienan Adams (kra8ff)</p>
+        <div id="transaction-info" class="txinfo-area clearfix"> 
+            <script id="txinfo-template" type="text/x-handlebars-template">
+              <h3> Transaction Info </h3>
+                    <div class="panel panel-default">
+                      <div class="panel-heading">
+                        <h3 class="panel-title">Block Hash</h3>
+                      </div>
+                      <div class="panel-body">
+                        {{block_hash}}
+                      </div>
+                    </div>
+                    <div class="panel panel-default">
+                      <div class="panel-heading">
+                        <h3 class="panel-title">Total Amount</h3>
+                      </div>
+                      <div class="panel-body">
+                        {{toBTC total}} BTC
+                      </div>
+                    </div>
+                    <div class="panel panel-default">
+                      <div class="panel-heading">
+                        <h3 class="panel-title">Confirmations</h3>
+                      </div>
+                      <div class="panel-body">
+                        {{confirmations}}
+                      </div>
+                    </div>
+                    <div class="panel panel-default">
+                      <div class="panel-heading">
+                        <h3 class="panel-title">Outputs</h3>
+                      </div>
+                      <div class="panel-body">
+                        {{#if outputs}}
+                    <ul>
+                      {{#each outputs}}
+                        {{#if spent_by}}
+                        <li>Transaction Hash: {{spent_by}}</li>
+                        {{/if}}
+                      {{/each}}
+                    </ul>
+                    {{else}}
+                    No Outputs
+                    {{/if}}
+                      </div>
+                    </div>
+              <hr>
+              <h3> Metadata </h3>
+                {{#if meta}}
+                  {{#each meta}}
+                    {{#each this}}
+                        <div class="panel panel-default">
+                          <div class="panel-heading">
+                            <h3 class="panel-title">{{@key}}</h3>
+                          </div>
+                          <div class="panel-body">
+                        {{this}}
+                      </div>
+                    </div>
+                  {{/each}}
+                {{/each}}
+              {{else}}
+                No Metadata
+              {{/if}}
+            </script>
+        </div>
+      </div>
+    </div>
 
-<h3>
-<a id="about" class="anchor" href="#about" aria-hidden="true"><span class="octicon octicon-link"></span></a>About</h3>
+    <div role="tab-panel" class="tab-pane fade" id="non-profit">
+      <div class="container-fluid nonprofit-content">
+        <div class="alert alert-success alert-dismissible hidden" role="alert" id="metaAlert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <strong>Sweet!</strong> Your metadata has been added to the transaction.
+        </div>
+        <form>
+          <div class="form-group">
+            <label for="mtTransactionHash">Transaction Hash</label>
+            <input type="hash" class="form-control" id="mtTransactionHash" placeholder="Hash">
+            <label for="transactionMetadata">Desired Metadata</label>
+            <input type="key-value" class="form-control" id="transactionMetadata" placeholder="Metadata">
+          </div>
+          <button id="buttonMetadata" type="button" class="btn btn-default">Submit</button>
+        <form>
+      </div>
+    </div>
 
-<p>The donation process for charities and nonprofits leaves something to be desired for donors. Once a donation is made, it seemingly disappears and joins a large mass of other funds held by the organizations. There isn't a direct way to discover exactly where their money went. Did my $10 a month actually provide 5 blankets to families in need? With this project, my hope is to determine whether a system using Bitcoin could provide the transparency necessary to unambiguously answer such a question. </p>
+  </div>
 
-      <footer class="site-footer">
-        <span class="site-footer-owner"><a href="https://github.com/keenadams/btc-donation-transparency">Bitcoin Donation Transparency</a> is maintained by <a href="https://github.com/keenadams">keenadams</a>.</span>
 
-        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
-      </footer>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/1.3.0/handlebars.min.js"></script>
+  <script src=../app.js></script>
 
-    </section>
-
-  
-  </body>
-</html>
+</body>
