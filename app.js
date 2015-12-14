@@ -10,8 +10,8 @@ function loadTransactionData(txHash) {
 
 	function setTransactionsTemplate() {
 		var transactionData = JSON.parse(sessionStorage.getItem('transactionData'));
-			metaData = JSON.parse(sessionStorage.getItem('metaData'));
-		transactionData['meta'] = metaData;
+		// 	metaData = JSON.parse(sessionStorage.getItem('metaData'));
+		// transactionData['meta'] = metaData;
 		var	getTemplate = $('#txinfo-template').html(),
 			template = Handlebars.compile(getTemplate),
 			result = template(transactionData);
@@ -23,13 +23,13 @@ function loadTransactionData(txHash) {
 		setTransactionsTemplate();
 	} else {
 		$.get(blockCypherAPI, {'token': API_KEY}, function(txinfo) {
-			$.get(blockCypherMetaAPI, {'token': API_KEY}, function(metainfo) {
+			// $.get(blockCypherMetaAPI, {'token': API_KEY}, function(metainfo) {
 				var txdata = JSON.stringify(txinfo);
-				var metadata = JSON.stringify(metainfo);
-				sessionStorage.setItem('metaData', metadata);
+				// var metadata = JSON.stringify(metainfo);
+				// sessionStorage.setItem('metaData', metadata);
 				sessionStorage.setItem('transactionData', txdata);
 				setTransactionsTemplate();
-			});
+			// });
 			
 		});
 	}
